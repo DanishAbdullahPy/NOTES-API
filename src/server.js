@@ -7,7 +7,7 @@ const PORT = config.PORT;
 const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📱 Environment: ${config.NODE_ENV}`);
-  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  console.log(`🔗 Health checking: http://localhost:${PORT}/health`);
   console.log(`📚 API Base URL: http://localhost:${PORT}/api`);
 });
 
