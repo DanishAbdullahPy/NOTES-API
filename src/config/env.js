@@ -1,9 +1,8 @@
-
 require('dotenv').config();
 
 const config = {
-  NODE_ENV: process.env.NODE_ENV || 'production',
-  PORT: process.env.PORT || 5000,
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  PORT: process.env.PORT || 3000,
   RENDER_BACKEND_URL: process.env.RENDER_BACKEND_URL,
   DATABASE_URL: process.env.DATABASE_URL,
   JWT_SECRET: process.env.JWT_SECRET || 'fallback-secret-key',
