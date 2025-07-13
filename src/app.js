@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 }
 
-const config = require('./config/config').default;
+const config = require('./config/config'); 
 
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const { testConnection } = require('./config/database');
@@ -27,7 +27,7 @@ app.use(helmet());
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
-  config.RENDER_BACKEND_URL,
+  config.RENDER_BACKEND_URL, 
 ].filter(Boolean);
 
 app.use(cors({
@@ -47,7 +47,7 @@ app.use(cors({
 app.use(express.json({ limit: '30mb' }));
 app.use(express.urlencoded({ extended: true, limit: '30mb' }));
 
-if (config.NODE_ENV === 'development') {
+if (config.NODE_ENV === 'development') { 
   app.use(morgan('dev'));
 } else {
   app.use(morgan('combined'));
@@ -64,7 +64,7 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    environment: config.NODE_ENV,
+    environment: config.NODE_ENV, 
     uptime: process.uptime(),
   });
 });
@@ -73,7 +73,7 @@ app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to Notes & Bookmarks API',
     version: '1.0.0',
-    environment: config.NODE_ENV,
+    environment: config.NODE_ENV, 
     endpoints: {
       health: '/health',
       docs: '/api-docs',
@@ -88,7 +88,6 @@ app.get('/', (req, res) => {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Function to find an available port
 function findAvailablePort(startPort, maxAttempts = 10) {
   return new Promise((resolve, reject) => {
     const net = require('net');
@@ -97,7 +96,7 @@ function findAvailablePort(startPort, maxAttempts = 10) {
 
     function testPort(port) {
       const server = net.createServer();
-      
+
       server.listen(port, () => {
         server.close(() => {
           resolve(port);
@@ -129,10 +128,9 @@ async function startServer() {
     await testConnection();
     console.log('Database connection successful.');
 
-    let PORT = config.PORT;
-    
-    // In development, find an available port if the default is taken
-    if (config.NODE_ENV === 'development') {
+    let PORT = config.PORT; 
+
+    if (config.NODE_ENV === 'development') { 
       try {
         PORT = await findAvailablePort(PORT);
       } catch (error) {
