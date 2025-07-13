@@ -88,20 +88,84 @@ app.get('/', (req, res) => {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+// Function to find an available port
+function findAvailablePort(startPort, maxAttempts = 10) {
+  return new Promise((resolve, reject) => {
+    const net = require('net');
+    let port = startPort;
+    let attempts = 0;
+
+    function testPort(port) {
+      const server = net.createServer();
+      
+      server.listen(port, () => {
+        server.close(() => {
+          resolve(port);
+        });
+      });
+
+      server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+          attempts++;
+          if (attempts >= maxAttempts) {
+            reject(new Error(`Unable to find available port after ${maxAttempts} attempts`));
+          } else {
+            console.log(`Port ${port} is in use, trying ${port + 1}...`);
+            testPort(port + 1);
+          }
+        } else {
+          reject(err);
+        }
+      });
+    }
+
+    testPort(port);
+  });
+}
+
 async function startServer() {
   try {
     console.log('Attempting to connect to database...');
     await testConnection();
     console.log('Database connection successful.');
 
-    const PORT = config.PORT;
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-      console.log(`Application URL: ${config.RENDER_BACKEND_URL || `http://localhost:${PORT}`}`);
-      console.log(`Environment: ${config.NODE_ENV}`);
-      console.log(`JWT Secret (partial): ${config.JWT_SECRET ? config.JWT_SECRET.substring(0, 5) + '...' : 'Not set'}`);
-      console.log(`Database URL (partial): ${process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 30) + '...' : 'Not set'}`);
+    let PORT = config.PORT;
+    
+    // In development, find an available port if the default is taken
+    if (config.NODE_ENV === 'development') {
+      try {
+        PORT = await findAvailablePort(PORT);
+      } catch (error) {
+        console.error('Error finding available port:', error);
+        process.exit(1);
+      }
+    }
+
+    const server = app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📱 Environment: ${config.NODE_ENV}`);
+      console.log(`🔗 Health checking: http://localhost:${PORT}/health`);
+      console.log(`📚 API Base URL: http://localhost:${PORT}/api`);
+      console.log(`📖 API Documentation: http://localhost:${PORT}/api-docs`);
     });
+
+    // Graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM received, shutting down gracefully...');
+      server.close(() => {
+        console.log('Server closed.');
+        process.exit(0);
+      });
+    });
+
+    process.on('SIGINT', () => {
+      console.log('SIGINT received, shutting down gracefully...');
+      server.close(() => {
+        console.log('Server closed.');
+        process.exit(0);
+      });
+    });
+
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);
@@ -109,5 +173,4 @@ async function startServer() {
 }
 
 startServer();
-
 module.exports = app;
