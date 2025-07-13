@@ -18,7 +18,6 @@ const options = {
       //   url: 'https://spdx.org/licenses/MIT.html',
       // },
     },
-    // Global tags for categorizing API endpoints in Swagger UI
     tags: [
       {
         name: 'Auth',
@@ -33,16 +32,19 @@ const options = {
         description: 'Comprehensive CRUD operations for user-specific bookmarks, including URL metadata fetching, tagging, and favorite status.', // More detailed description
       },
       {
-        name: 'Search', // Ensure this name matches the 'tags' array in your route JSDocs
+        name: 'Search', 
         description: 'Global search across notes and bookmarks, and operations related to tags and suggestions.', // More detailed description
       },
-      // Add any other global tags here if you expand your API (e.g., 'Health Checks', 'Admin')
     ],
     // API servers for different environments
     servers: [
       {
-        url: `http://localhost:${process.env.PORT || 5000}/api`, // Dynamically pick port from environment or default to 5000
-        description: 'Local Development Server',
+        url: `http://localhost:${process.env.PORT || 5000}/api`, 
+      },
+
+      {
+        url: `${config.RENDER_BACKEND_URL}/api`, 
+        description: 'Render Production Server',
       },
       // Example for a production server
       // {
@@ -56,12 +58,11 @@ const options = {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
-          bearerFormat: 'JWT', // Explicitly states JWT format
+          bearerFormat: 'JWT', 
           description: 'Bearer Token for API authentication. Provide the JWT token obtained from the `/api/auth/login` endpoint (e.g., `Bearer YOUR_TOKEN_HERE`).', // More instructional description
         },
       },
       schemas: {
-        // --- Common Response Schemas ---
         SuccessResponse: {
           type: 'object',
           description: 'Standard successful API response structure.',
@@ -81,8 +82,8 @@ const options = {
             message: { type: 'string', example: 'An error occurred during the operation.', description: 'A human-readable error message.' },
             errors: {
               type: 'object',
-              nullable: true, // Errors object might be null for generic errors
-              additionalProperties: { type: 'string' }, // More specific type for values in 'errors' object
+              nullable: true, 
+              additionalProperties: { type: 'string' }, 
               description: 'Optional: An object containing specific field-level validation errors or other detailed error information.',
               example: { email: 'Invalid email format.', password: 'Password must be at least 8 characters long.' }, // More realistic example
             },
@@ -187,9 +188,7 @@ const options = {
             isFavorite: { type: 'boolean', example: true, description: 'Boolean indicating if the bookmark is marked as a favorite.' },
             createdAt: { type: 'string', format: 'date-time', example: '2023-01-05T14:00:00Z', description: 'Timestamp when the bookmark was created.' },
             updatedAt: { type: 'string', format: 'date-time', example: '2023-01-05T14:15:00Z', description: 'Timestamp when the bookmark was last updated.' },
-            // Add metadata fields if they are stored in the Bookmark schema directly
-            // image: { type: 'string', format: 'url', example: 'https://example.com/image.png', nullable: true, description: 'Main image URL from the bookmarked page.' },
-            // favicon: { type: 'string', format: 'url', example: 'https://example.com/favicon.ico', nullable: true, description: 'Favicon URL of the bookmarked page.' },
+            
           },
           required: ['id', 'userId', 'url', 'tags', 'isFavorite', 'createdAt', 'updatedAt'], // Title and description can be nullable
         },

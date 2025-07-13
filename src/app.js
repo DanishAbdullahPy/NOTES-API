@@ -13,13 +13,21 @@ const bookmarksRoutes = require('./routes/bookmarks');
 const authRoutes = require('./routes/auth');
 const searchRoutes = require('./routes/search');
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+}
 const app = express();
 
 app.use(helmet());
 
 app.use(cors({
-  origin: config.CORS_ORIGIN,
-  credentials: true,
+  origin: [
+    'http://localhost:3000',
+    'https://your-frontend-app.onrender.com', 
+    'https://notes-api-n9fk.onrender.com' 
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true 
 }));
 
 app.use(express.json({ limit: '30mb' }));
