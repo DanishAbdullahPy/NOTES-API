@@ -1,11 +1,9 @@
-// config.js
 const config = {
-  // Server Configuration
   NODE_ENV: process.env.NODE_ENV || 'development',
-  PORT: process.env.PORT || 8000,
+  PORT: process.env.PORT || 10000, 
   RENDER_BACKEND_URL: process.env.RENDER_BACKEND_URL,
   JWT_SECRET: process.env.JWT_SECRET,
-  isProduction: () => process.env.NODE_ENV === 'production' || process.env.RENDER,
+  isProduction: () => process.env.NODE_ENV === 'production' || !!process.env.RENDER, 
   isRender: () => !!process.env.RENDER,
 };
 
@@ -16,4 +14,4 @@ config.getBaseUrl = () => {
     return `http://localhost:${config.PORT}`;
 };
 
-export default config;
+module.exports = config; 
