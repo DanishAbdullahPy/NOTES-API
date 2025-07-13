@@ -1,0 +1,69 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  notes     Note[]
+  bookmarks Bookmark[]
+
+  @@map("users")
+}
+
+model Note {
+  id        String   @id @default(uuid()) @map("_id")
+  title       String   @db.VarChar(200)
+  content     String   @db.Text
+  tags        String[]
+  isFavorite  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Indexes for better search performance
+  @@index([userId])
+  @@index([tags])
+  @@index([isFavorite])
+  @@index([createdAt])
+  @@map("notes")
+}
+
+model Bookmark {
+  id          String   @id @default(cuid())
+  title       String   @db.VarChar(200)
+  url         String   @db.VarChar(2000)
+  description String?  @db.Text
+  tags        String[]
+  isFavorite  Boolean  @default(false)
+  favicon     String?  @db.VarChar(500)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Indexes for better search performance
+  @@index([userId])
+  @@index([tags])
+  @@index([isFavorite])
+  @@index([createdAt])
+  @@map("bookmarks")
+}
