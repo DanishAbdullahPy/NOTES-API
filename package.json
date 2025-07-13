@@ -6,7 +6,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "postinstall": "npx prisma generate",
-    "prisma:deploy": "npx prisma migrate deploy",  
+    "prisma:deploy": "npx prisma migrate deploy",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "db:push": "prisma db push",

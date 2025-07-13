@@ -1,6 +1,6 @@
 
 const swaggerJsdoc = require('swagger-jsdoc');
-const config = require('./config'); 
+const config = require('./config').default; 
 const options = {
   definition: {
     openapi: '3.0.0',

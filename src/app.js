@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 }
 
-const config = require('./config/config');
+const config = require('./config/config').default;
 
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const { testConnection } = require('./config/database');
